@@ -29,7 +29,6 @@ async function main() {
   while (true) {
     const pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}`);
     const pokemonData = (await pokemon.json()) as PokemonData;
-    console.dir(pokemonData);
     const name = pokemonData.name;
     const imageUrl = pokemonData.sprites.other.dream_world.front_default;
 
