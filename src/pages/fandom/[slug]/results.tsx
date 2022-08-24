@@ -1,7 +1,7 @@
 import type { GetServerSideProps, GetStaticPaths } from 'next';
 import { prisma } from '../../../server/prisma';
 
-import { Box, Flex, Grid, Heading, Image } from '@chakra-ui/react';
+import { Box, Flex, Heading, Image } from '@chakra-ui/react';
 import Head from 'next/head';
 
 type AsyncReturnType<T extends (...args: any) => Promise<any>> = T extends (
@@ -11,7 +11,7 @@ type AsyncReturnType<T extends (...args: any) => Promise<any>> = T extends (
   : any;
 
 function generateArray(w: number, h: number, val: number) {
-  var arr: number[][] = [];
+  let arr: number[][] = [];
   for (let i = 0; i < h; i++) {
     arr[i] = [];
     for (let j = 0; j < w; j++) {
@@ -36,7 +36,8 @@ const calculateRanks = (
     return acc;
   }, initialArray);
 
-  let ranks: number[] = [...Array(length)].map((_) => 1);
+  let ranks: number[] =
+    initialRanks.length > 0 ? initialRanks : [...Array(length)].map((_) => 1);
 
   for (let i = 0; i < length; i++) {
     const numerator = matrix[i].reduce((acc: any, curr: any) => {

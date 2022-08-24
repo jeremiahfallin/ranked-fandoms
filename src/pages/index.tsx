@@ -5,7 +5,7 @@ import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
 
 const IndexPage: NextPageWithLayout = () => {
-  const { data, status } = trpc.useQuery(['fandom.all']);
+  const { data } = trpc.useQuery(['fandom.all']);
 
   return (
     <>
