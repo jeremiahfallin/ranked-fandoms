@@ -1,8 +1,10 @@
 import type { GetServerSideProps, GetStaticPaths } from 'next';
 import { prisma } from '../../../server/prisma';
 
-import { Box, Flex, Heading, Image } from '@chakra-ui/react';
+import { Box, Flex, Heading, Image, Text } from '@chakra-ui/react';
 import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 type AsyncReturnType<T extends (...args: any) => Promise<any>> = T extends (
   ...args: any
@@ -159,14 +161,19 @@ const ItemListing: React.FC<{
 const ResultsPage: React.FC<{
   data: ResultsQueryResult;
 }> = ({ data }) => {
+  const slug = useRouter().query.slug as string;
   if (!data) return null;
   return (
     <div>
       <Head>
         <title>Results</title>
       </Head>
+
       <Flex justifyContent="center" alignItems="center" direction="column">
         <Heading pb={8}>Results</Heading>
+        <Text fontSize="xl" pb={2}>
+          <Link href={`/fandom/${slug}`}>Vote</Link>
+        </Text>
         {data.map((item, index) => {
           return <ItemListing key={item.id} item={item} rank={index + 1} />;
         })}
