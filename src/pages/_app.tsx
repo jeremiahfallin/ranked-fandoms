@@ -3,7 +3,6 @@ import { loggerLink } from '@trpc/client/links/loggerLink';
 import { withTRPC } from '@trpc/next';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
-import { AppType } from 'next/dist/shared/lib/utils';
 import { ReactElement, ReactNode } from 'react';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import superjson from 'superjson';
@@ -41,7 +40,7 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <ChakraProvider resetCSS theme={theme}>
       <DefaultLayout>
