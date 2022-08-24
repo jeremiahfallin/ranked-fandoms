@@ -1,5 +1,4 @@
 import { createRouter } from '../createRouter';
-import { postRouter } from './post';
 import { fandomRouter } from './fandom';
 import superjson from 'superjson';
 
