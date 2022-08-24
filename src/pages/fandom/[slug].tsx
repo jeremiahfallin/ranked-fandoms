@@ -61,7 +61,7 @@ const FandomPage: NextPageWithLayout = () => {
           borderRadius="lg"
           p={8}
         >
-          {data.map((item) => {
+          {data?.map((item) => {
             if (!item) return null;
             if (isFetching) {
               return (
