@@ -22,8 +22,8 @@ export const fandomRouter = trpc
   .query('by-slug', {
     input: z.string(),
     async resolve({ input }) {
-      const fandom = await prisma.fandom.findOne({
-        where: { input },
+      const fandom = await prisma.fandom.findFirst({
+        where: { slug: input },
       });
       return fandom;
     },
