@@ -1,25 +1,61 @@
-/**
- * Adds seed data to your db
- *
- * @link https://www.prisma.io/docs/guides/database/seed-database
- */
+import fetch from 'cross-fetch';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+interface PokemonData {
+  name: string;
+  sprites: {
+    other: {
+      dream_world: {
+        front_default: string;
+      };
+    };
+  };
+}
+
 async function main() {
-  const firstPostId = '5c03994c-fc16-47e0-bd02-d218a370a078';
-  await prisma.post.upsert({
+  const fandom = await prisma.fandom.upsert({
     where: {
-      id: firstPostId,
+      slug: 'pokemon',
     },
     create: {
-      id: firstPostId,
-      title: 'First Post',
-      text: 'This is an example post generated from `prisma/seed.ts`',
+      slug: 'pokemon',
+      name: 'Pokemon',
     },
     update: {},
   });
+  let i = 1;
+  while (true) {
+    const pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}`);
+    const pokemonData = (await pokemon.json()) as PokemonData;
+    console.dir(pokemonData);
+    const name = pokemonData.name;
+    const imageUrl = pokemonData.sprites.other.dream_world.front_default;
+
+    if (imageUrl) {
+      await prisma.fandomItem.upsert({
+        where: {
+          id: i.toString(),
+        },
+        create: {
+          id: i.toString(),
+          name,
+          imageUrl,
+          rating: 0,
+          fandom: {
+            connect: {
+              slug: 'pokemon',
+            },
+          },
+        },
+        update: {},
+      });
+    } else {
+      break;
+    }
+    i++;
+  }
 }
 
 main()

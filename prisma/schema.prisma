@@ -2,21 +2,41 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "postgres"
-  url      = env("DATABASE_URL")
+  provider             = "postgres"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
-model Post {
-  id    String @id @default(uuid())
-  title String
-  text  String
-
-  // To return `Date`s intact through the API we need to add data transformers
-  // https://trpc.io/docs/data-transformers
+model Vote {
+  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+
+  votedFor       FandomItem @relation(name: "votesFor", fields: [votedForId], references: [id])
+  votedForId     String
+  votedAgainst   FandomItem @relation(name: "votesAgainst", fields: [votedAgainstId], references: [id])
+  votedAgainstId String
+}
+
+model FandomItem {
+  id       String @id @default(cuid())
+  name     String
+  fandom   Fandom @relation(fields: [fandomId], references: [id])
+  fandomId String
+  imageUrl String
+  rating   Float
+
+  voteFor     Vote[] @relation("votesFor")
+  voteAgainst Vote[] @relation("votesAgainst")
+}
+
+model Fandom {
+  id    String       @id @default(cuid())
+  name  String
+  slug  String       @unique
+  items FandomItem[]
 }
