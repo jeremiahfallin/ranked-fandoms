@@ -18,16 +18,14 @@ const FandomPage: NextPageWithLayout = () => {
   const voteMutation = trpc.useMutation(['fandom.cast-vote']);
 
   const castVote = (selected: string) => {
-    if (!data) return; // Early escape to make Typescript happy
+    if (!data || !data[0] || !data[1]) return;
 
     if (selected === data?.[0].id) {
-      // If voted for 1st pokemon, fire voteFor with first ID
       voteMutation.mutate({
         votedFor: data?.[0].id,
         votedAgainst: data?.[1].id,
       });
     } else {
-      // else fire voteFor with second ID
       voteMutation.mutate({
         votedFor: data?.[1].id,
         votedAgainst: data?.[0].id,
@@ -64,6 +62,7 @@ const FandomPage: NextPageWithLayout = () => {
           p={8}
         >
           {data.map((item) => {
+            if (!item) return null;
             if (isFetching) {
               return (
                 <React.Fragment key={item.id}>

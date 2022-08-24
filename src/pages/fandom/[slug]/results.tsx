@@ -11,11 +11,11 @@ type AsyncReturnType<T extends (...args: any) => Promise<any>> = T extends (
   : any;
 
 function generateArray(w: number, h: number, val: number) {
-  var arr = [];
+  var arr: number[][] = [];
   for (let i = 0; i < h; i++) {
     arr[i] = [];
     for (let j = 0; j < w; j++) {
-      arr[i][j] = val;
+      arr![i]![j] = val;
     }
   }
   return arr;
@@ -30,21 +30,26 @@ const calculateRanks = (
 ) => {
   const initialArray = generateArray(length, length, 0);
 
-  const matrix = votes.reduce((acc, curr) => {
+  const matrix = votes.reduce((acc: any, curr: any) => {
     acc[parseInt(curr.votedFor.id)][parseInt(curr.votedAgainst.id)] =
       acc[parseInt(curr.votedFor.id)][parseInt(curr.votedAgainst.id)] + 1;
     return acc;
   }, initialArray);
 
-  let ranks = Array.from(Array(length), (_) => 1);
+  let ranks: number[] = [...Array(length)].map((_) => 1);
 
   for (let i = 0; i < length; i++) {
-    const numerator = matrix[i].reduce((acc, curr) => {
+    const numerator = matrix[i].reduce((acc: any, curr: any) => {
       return acc + curr;
     }, 0);
     let denominator = 0;
     for (let j = 0; j < length; j++) {
-      denominator += (matrix[i][j] + matrix[j][i]) / (ranks[i] + ranks[j]);
+      if (typeof ranks[i] !== undefined) {
+        const rankI: any = ranks[i];
+        const rankJ: any = ranks[j];
+        const rankSum = rankI + rankJ;
+        denominator += (matrix[i][j] + matrix[j][i]) / rankSum;
+      }
     }
     ranks[i] = numerator / denominator || 0;
   }
@@ -102,32 +107,25 @@ const getResultsInOrder = async () => {
       acc.push(...item.voteAgainst);
     }
     return acc;
-  }, []);
+  }, [] as any);
 
-  return calculateRanks(
+  const ranks = calculateRanks(
     votes,
     items.length,
     calculateRanks(votes, items.length),
-  ).map((rank, index) => {
+  );
+
+  return ranks.map((rank, index) => {
     return {
-      id: items[index].id,
-      name: items[index].name,
-      imageUrl: items[index].imageUrl,
+      id: items?.[index]?.id,
+      name: items?.[index]?.name,
+      imageUrl: items?.[index]?.imageUrl,
       rank: rank,
     };
   });
 };
 
 type ResultsQueryResult = AsyncReturnType<typeof getResultsInOrder>;
-
-const generateCountPercent = (pokemon: ResultsQueryResult[number]) => {
-  const { voteFor, voteAgainst } = pokemon._count;
-  if (!voteFor || !voteAgainst) return 0;
-  if (voteFor + voteAgainst === 0) {
-    return 0;
-  }
-  return (voteFor / (voteFor + voteAgainst)) * 100;
-};
 
 const ItemListing: React.FC<{
   item: ResultsQueryResult[number];
