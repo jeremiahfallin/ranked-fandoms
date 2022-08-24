@@ -11,7 +11,7 @@ type AsyncReturnType<T extends (...args: any) => Promise<any>> = T extends (
   : any;
 
 function generateArray(w: number, h: number, val: number) {
-  let arr: number[][] = [];
+  const arr: number[][] = [];
   for (let i = 0; i < h; i++) {
     arr[i] = [];
     for (let j = 0; j < w; j++) {
