@@ -73,7 +73,7 @@ const calculateRanks = (
   return ranks;
 };
 
-const getResultsInOrder = async (slug) => {
+const getResultsInOrder = async (slug: string) => {
   const items = await prisma.fandomItem.findMany({
     where: {
       fandom: {
@@ -214,7 +214,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetServerSideProps = async ({ params }) => {
-  const { slug } = params;
+  const slug = params?.slug;
+  if (!slug) return { props: { data: null } };
   const resultsOrdered = await getResultsInOrder(slug);
   const DAY_IN_SECONDS = 60 * 60 * 24;
   return { props: { data: resultsOrdered }, revalidate: DAY_IN_SECONDS };
