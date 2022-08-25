@@ -102,7 +102,12 @@ const FandomPage: NextPageWithLayout = () => {
                     height="100%"
                     p={2}
                   >
-                    <Flex h="100%" pb={4}>
+                    <Flex
+                      h="100%"
+                      pb={4}
+                      alignItems="center"
+                      justifyContent="center"
+                    >
                       <Image src={item.imageUrl} alt={item.name} maxH="200px" />
                     </Flex>
                     <Box textTransform={'uppercase'}>{item.name}</Box>
