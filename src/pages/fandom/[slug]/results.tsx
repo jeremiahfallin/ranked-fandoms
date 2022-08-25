@@ -102,6 +102,10 @@ const getResultsInOrder = async () => {
     },
   });
 
+  if (items.length === 0) {
+    return items;
+  }
+
   const votes = items.reduce((acc, item) => {
     if (item.voteFor.length > 0) {
       acc.push(...item.voteFor);

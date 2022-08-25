@@ -14,7 +14,7 @@ interface PokemonData {
   };
 }
 
-async function main() {
+async function insertPokemon() {
   const fandom = await prisma.fandom.upsert({
     where: {
       slug: 'pokemon',
@@ -51,10 +51,100 @@ async function main() {
         update: {},
       });
     } else {
+      console.log(i);
       break;
     }
     i++;
   }
+}
+
+async function insertAnimalCrossing() {
+  const fandom = await prisma.fandom.upsert({
+    where: {
+      slug: 'animal-crossing',
+    },
+    create: {
+      slug: 'animal-crossing',
+      name: 'Animal Crossing',
+    },
+    update: {},
+  });
+  const villagers = await fetch(
+    `https://api.nookipedia.com/villagers?game=nh&nhdetails=true&api_key=${process.env.NOOKIEPEDIA_API_KEY}`,
+  );
+  const villagersData = await villagers.json();
+
+  let i = 1;
+  for (const villager of villagersData) {
+    const name = villager.name;
+    const imageUrl = villager.image_url;
+    await prisma.fandomItem.upsert({
+      where: {
+        id: i.toString(),
+      },
+      create: {
+        id: i.toString(),
+        name,
+        imageUrl,
+        rating: 0,
+        fandom: {
+          connect: {
+            slug: 'animal-crossing',
+          },
+        },
+      },
+      update: {},
+    });
+    i++;
+  }
+}
+
+async function insertLeague() {
+  const fandom = await prisma.fandom.upsert({
+    where: {
+      slug: 'league-of-legends',
+    },
+    create: {
+      slug: 'league-of-legends',
+      name: 'League of Legends',
+    },
+    update: {},
+  });
+
+  const champions = await fetch(
+    `http://ddragon.leagueoflegends.com/cdn/12.16.1/data/en_US/champion.json`,
+  );
+  const championsData = await champions.json();
+  const championsList = championsData.data;
+  let i = 1;
+  for (const champion of championsList) {
+    const name = champion.name;
+    const imageUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champion.id}_0.jpg`;
+    await prisma.fandomItem.upsert({
+      where: {
+        id: i.toString(),
+      },
+      create: {
+        id: i.toString(),
+        name,
+        imageUrl,
+        rating: 0,
+        fandom: {
+          connect: {
+            slug: 'league-of-legends',
+          },
+        },
+      },
+      update: {},
+    });
+    i++;
+  }
+}
+
+async function main() {
+  await insertPokemon();
+  await insertAnimalCrossing();
+  await insertLeague();
 }
 
 main()
