@@ -2,7 +2,15 @@ import NextError from 'next/error';
 import { useRouter } from 'next/router';
 import { NextPageWithLayout } from '~/pages/_app';
 import { trpc } from '~/utils/trpc';
-import { Image, Box, Flex, Heading, Text, Spinner } from '@chakra-ui/react';
+import {
+  Button,
+  Image,
+  Box,
+  Flex,
+  Heading,
+  Text,
+  Spinner,
+} from '@chakra-ui/react';
 import React from 'react';
 import Link from 'next/link';
 
@@ -52,7 +60,13 @@ const FandomPage: NextPageWithLayout = () => {
   return (
     <Flex direction="column" alignItems="center" h="100%" p={4}>
       <Heading>Choose which is best!</Heading>
-      <Flex justifyContent="center" height="100%" gap={2} alignItems="center">
+      <Flex
+        justifyContent="center"
+        height="100%"
+        gap={2}
+        alignItems="center"
+        direction="column"
+      >
         <Flex
           h="240px"
           gap={4}
@@ -98,6 +112,7 @@ const FandomPage: NextPageWithLayout = () => {
             }
           })}
         </Flex>
+        <Button onClick={() => refetch()}>Skip</Button>
       </Flex>
       <Text>
         <Link href={`/fandom/${slug}/results`}>Results</Link>
