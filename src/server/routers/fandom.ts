@@ -38,13 +38,13 @@ export const fandomRouter = trpc
       const fandomItemA = await prisma.fandomItem.findFirst({
         where: {
           fandom: { slug: input },
-          id: a.toString(),
+          id: `${input}-${a}`,
         },
       });
       const fandomItemB = await prisma.fandomItem.findFirst({
         where: {
           fandom: { slug: input },
-          id: b.toString(),
+          id: `${input}-${b}`,
         },
       });
 

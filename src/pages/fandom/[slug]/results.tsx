@@ -33,8 +33,9 @@ const calculateRanks = (
   const initialArray = generateArray(length, length, 0);
 
   const matrix = votes.reduce((acc: any, curr: any) => {
-    acc[parseInt(curr.votedFor.id)][parseInt(curr.votedAgainst.id)] =
-      acc[parseInt(curr.votedFor.id)][parseInt(curr.votedAgainst.id)] + 1;
+    const votedForId = parseInt(curr.votedFor.id.split('-').pop()) - 1;
+    const votedAgainstId = parseInt(curr.votedAgainst.id.split('-').pop()) - 1;
+    acc[votedForId][votedAgainstId] = acc[votedForId][votedAgainstId] + 1;
     return acc;
   }, initialArray);
 

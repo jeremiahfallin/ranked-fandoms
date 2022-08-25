@@ -1,5 +1,6 @@
 import fetch from 'cross-fetch';
 import { PrismaClient } from '@prisma/client';
+import { string } from 'zod';
 
 const prisma = new PrismaClient();
 
@@ -14,13 +15,19 @@ interface PokemonData {
   };
 }
 
+interface LeagueData {
+  id: string;
+  name: string;
+}
+
 async function insertPokemon() {
+  const slug = 'pokemon';
   const fandom = await prisma.fandom.upsert({
     where: {
-      slug: 'pokemon',
+      slug,
     },
     create: {
-      slug: 'pokemon',
+      slug,
       name: 'Pokemon',
     },
     update: {},
@@ -35,10 +42,10 @@ async function insertPokemon() {
     if (imageUrl) {
       await prisma.fandomItem.upsert({
         where: {
-          id: i.toString(),
+          id: `${slug}-${i}`,
         },
         create: {
-          id: i.toString(),
+          id: `${slug}-${i}`,
           name,
           imageUrl,
           rating: 0,
@@ -52,6 +59,7 @@ async function insertPokemon() {
       });
     } else {
       console.log(i);
+      console.log(pokemonData);
       break;
     }
     i++;
@@ -59,20 +67,22 @@ async function insertPokemon() {
 }
 
 async function insertAnimalCrossing() {
+  const slug = 'animal-crossing';
   const fandom = await prisma.fandom.upsert({
     where: {
-      slug: 'animal-crossing',
+      slug,
     },
     create: {
-      slug: 'animal-crossing',
+      slug,
       name: 'Animal Crossing',
     },
     update: {},
   });
   const villagers = await fetch(
-    `https://api.nookipedia.com/villagers?game=nh&nhdetails=true&api_key=${process.env.NOOKIEPEDIA_API_KEY}`,
+    `https://api.nookipedia.com/villagers?game=nh&nhdetails=true&api_key=${process.env.NOOKIPEDIA_API_KEY}`,
   );
   const villagersData = await villagers.json();
+  console.dir(villagersData);
 
   let i = 1;
   for (const villager of villagersData) {
@@ -80,16 +90,16 @@ async function insertAnimalCrossing() {
     const imageUrl = villager.image_url;
     await prisma.fandomItem.upsert({
       where: {
-        id: i.toString(),
+        id: `${slug}-${i}`,
       },
       create: {
-        id: i.toString(),
+        id: `${slug}-${i}`,
         name,
         imageUrl,
         rating: 0,
         fandom: {
           connect: {
-            slug: 'animal-crossing',
+            slug,
           },
         },
       },
@@ -100,12 +110,13 @@ async function insertAnimalCrossing() {
 }
 
 async function insertLeague() {
+  const slug = 'league-of-legends';
   const fandom = await prisma.fandom.upsert({
     where: {
-      slug: 'league-of-legends',
+      slug,
     },
     create: {
-      slug: 'league-of-legends',
+      slug,
       name: 'League of Legends',
     },
     update: {},
@@ -117,21 +128,22 @@ async function insertLeague() {
   const championsData = await champions.json();
   const championsList = championsData.data;
   let i = 1;
-  for (const champion of championsList) {
-    const name = champion.name;
-    const imageUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champion.id}_0.jpg`;
+  for (let champion of Object.keys(championsList)) {
+    const name = championsList[champion].name;
+    const imageUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${championsList[champion].id}_0.jpg`;
+
     await prisma.fandomItem.upsert({
       where: {
-        id: i.toString(),
+        id: `${slug}-${i}`,
       },
       create: {
-        id: i.toString(),
+        id: `${slug}-${i}`,
         name,
         imageUrl,
         rating: 0,
         fandom: {
           connect: {
-            slug: 'league-of-legends',
+            slug,
           },
         },
       },
@@ -141,9 +153,36 @@ async function insertLeague() {
   }
 }
 
+async function fixVotes() {
+  const slug = 'pokemon';
+  const items = await prisma.vote.findMany();
+  for (const item of items) {
+    if (
+      !item.votedForId.includes(`${slug}-`) &&
+      !item.votedAgainstId.includes(`${slug}-`)
+    ) {
+      await prisma.vote.update({
+        where: {
+          id: item.id,
+        },
+        data: {
+          votedFor: {
+            connect: {
+              id: `${slug}-${item.votedForId}`,
+            },
+          },
+          votedAgainst: {
+            connect: {
+              id: `${slug}-${item.votedAgainstId}`,
+            },
+          },
+        },
+      });
+    }
+  }
+}
+
 async function main() {
-  await insertPokemon();
-  await insertAnimalCrossing();
   await insertLeague();
 }
 
