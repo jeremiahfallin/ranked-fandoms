@@ -215,7 +215,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetServerSideProps = async ({ params }) => {
   const slug = params?.slug;
-  if (!slug) return { props: { data: null } };
+  if (!(slug === typeof 'string')) return { props: { data: null } };
   const resultsOrdered = await getResultsInOrder(slug);
   const DAY_IN_SECONDS = 60 * 60 * 24;
   return { props: { data: resultsOrdered }, revalidate: DAY_IN_SECONDS };
