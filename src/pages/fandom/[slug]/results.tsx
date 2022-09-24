@@ -6,72 +6,13 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import bt from '../../../utils/bt';
+
 type AsyncReturnType<T extends (...args: any) => Promise<any>> = T extends (
   ...args: any
 ) => Promise<infer R>
   ? R
   : any;
-
-function generateArray(w: number, h: number, val: number) {
-  const arr: number[][] = [];
-  for (let i = 0; i < h; i++) {
-    arr[i] = [];
-    for (let j = 0; j < w; j++) {
-      arr![i]![j] = val;
-    }
-  }
-  return arr;
-}
-
-// generate and return results using bradley-terry algorithm
-
-const calculateRanks = (
-  votes: any,
-  length: number,
-  initialRanks: number[] = [],
-) => {
-  const initialArray = generateArray(length, length, 0);
-
-  const matrix = votes.reduce((acc: any, curr: any) => {
-    const votedForId = parseInt(curr.votedFor.id.split('-').pop()) - 1;
-    const votedAgainstId = parseInt(curr.votedAgainst.id.split('-').pop()) - 1;
-    acc[votedForId][votedAgainstId] = acc[votedForId][votedAgainstId] + 1;
-    return acc;
-  }, initialArray);
-
-  let ranks: number[] =
-    initialRanks.length > 0 ? initialRanks : [...Array(length)].map((_) => 1);
-
-  for (let i = 0; i < length; i++) {
-    const numerator = matrix[i].reduce((acc: any, curr: any) => {
-      return acc + curr;
-    }, 0);
-    let denominator = 0;
-    for (let j = 0; j < length; j++) {
-      if (typeof ranks[i] !== undefined) {
-        const rankI: any = ranks[i];
-        const rankJ: any = ranks[j];
-        const rankSum = rankI + rankJ;
-        denominator += (matrix[i][j] + matrix[j][i]) / rankSum;
-      }
-    }
-    ranks[i] = numerator / denominator || 0;
-  }
-
-  const sum = ranks.reduce((acc, curr) => {
-    return acc + curr;
-  }, 0);
-
-  ranks = ranks
-    .map((rank) => {
-      return rank / sum;
-    })
-    .sort((a, b) => {
-      return b - a;
-    });
-
-  return ranks;
-};
 
 const getResultsInOrder = async (slug: string) => {
   const items = await prisma.fandomItem.findMany({
@@ -124,11 +65,7 @@ const getResultsInOrder = async (slug: string) => {
     return acc;
   }, [] as any);
 
-  const ranks = calculateRanks(
-    votes,
-    items.length,
-    calculateRanks(votes, items.length),
-  );
+  const ranks = bt(votes, items.length, bt(votes, items.length));
 
   return ranks.map((rank, index) => {
     return {
@@ -161,7 +98,7 @@ const ItemListing: React.FC<{
         {rank}
       </Box>
       <Box>
-        <Image src={item.imageUrl} maxH="100px" maxW="100px" />
+        <Image src={item.imageUrl} alt={item.name} maxH="100px" maxW="100px" />
       </Box>
       <Flex direction="column" alignItems="center">
         <Box textTransform={'uppercase'}>{item.name}</Box>

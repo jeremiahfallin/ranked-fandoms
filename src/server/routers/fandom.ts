@@ -1,6 +1,7 @@
 import * as trpc from '@trpc/server';
 import { z } from 'zod';
 import { prisma } from '../prisma';
+import asap from '../../utils/asap';
 
 const getRandomWithExclusion: (range: number, exclude?: number) => number = (
   range,
@@ -46,6 +47,10 @@ export const fandomRouter = trpc
           fandom: { slug: input },
           id: `${input}-${b}`,
         },
+      });
+
+      const fandom = await prisma.fandom.findFirst({
+        where: { slug: input },
       });
 
       return [fandomItemA, fandomItemB];
