@@ -44,7 +44,7 @@ const IndexPage: NextPageWithLayout = (props) => {
               >
                 <Link href={`/fandom/${fandom.slug}`}>
                   <Image
-                    src={props?.data[fandom.slug]?.src || ''}
+                    src={slugToImage[fandom.slug]?.src || ''}
                     w={'auto'}
                     h={'100%'}
                     maxH={'140px'}
@@ -58,12 +58,3 @@ const IndexPage: NextPageWithLayout = (props) => {
   );
 };
 export default IndexPage;
-
-// get static props
-export async function getStaticProps() {
-  return {
-    props: {
-      data: slugToImage,
-    },
-  };
-}
