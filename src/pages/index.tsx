@@ -39,7 +39,7 @@ const IndexPage: NextPageWithLayout = (props) => {
                 p={4}
                 borderWidth="1px"
                 borderRadius="lg"
-                bg="red.900"
+                bg="whiteAlpha.900"
               >
                 <Link href={`/fandom/${fandom.slug}`}>
                   <Image

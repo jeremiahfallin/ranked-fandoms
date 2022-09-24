@@ -11,7 +11,7 @@ export default function Header() {
         alignItems="center"
       >
         <Heading>
-          <Link href="/">Rank It!</Link>
+          <Link href="/">Ranked Fandoms</Link>
         </Heading>
 
         <Text fontWeight={500}>
