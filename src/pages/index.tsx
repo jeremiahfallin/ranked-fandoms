@@ -16,11 +16,16 @@ const slugToImage = {
   'stardew-valley': stardewValleyImage,
   'animal-crossing': animalCrossingImage,
   'league-of-legends': leagueOfLegendsImage,
-};
+} as SlugToImage;
+
+interface SlugToImage {
+  [key: string]: {
+    src: string;
+  };
+}
 
 const IndexPage: NextPageWithLayout = (props) => {
   const { data } = trpc.useQuery(['fandom.all']);
-  console.log(slugToImage);
 
   return (
     <Box p={4}>
@@ -38,7 +43,7 @@ const IndexPage: NextPageWithLayout = (props) => {
               >
                 <Link href={`/fandom/${fandom.slug}`}>
                   <Image
-                    src={slugToImage[fandom.slug].src}
+                    src={slugToImage[fandom.slug]?.src || ''}
                     w={'auto'}
                     h={'100%'}
                     maxH={'140px'}
