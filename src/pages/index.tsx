@@ -1,6 +1,5 @@
-import { Box, Flex, Heading, Image } from '@chakra-ui/react';
+import { Box, Flex, Heading, Image, Spinner } from '@chakra-ui/react';
 import Link from 'next/link';
-import { Fragment } from 'react';
 import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
 
@@ -25,13 +24,15 @@ interface SlugToImage {
 }
 
 const IndexPage: NextPageWithLayout = (props) => {
-  const { data } = trpc.useQuery(['fandom.all']);
+  const { data, isFetching } = trpc.useQuery(['fandom.all']);
 
   return (
     <Box p={4}>
       <Heading size="lg">Pick a Fandom</Heading>
       <Flex p={4} gap={4} wrap="wrap">
+        {isFetching && <Spinner color="red.500" size="xl" />}
         {data &&
+          !isFetching &&
           data.map((fandom) => {
             return (
               <Box
