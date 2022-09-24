@@ -1,29 +1,54 @@
-import { Box, Flex, Heading } from '@chakra-ui/react';
+import { Box, Flex, Heading, Image } from '@chakra-ui/react';
 import Link from 'next/link';
 import { Fragment } from 'react';
 import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
 
+import fireEmblemImage from '../assets/Fire_Emblem_Three_Houses_Logo.webp';
+import pokemonImage from '../assets/pokemon-logo-png-1446.png';
+import stardewValleyImage from '../assets/stardew-valley.png';
+import animalCrossingImage from '../assets/animal-crossing.png';
+import leagueOfLegendsImage from '../assets/league-of-legends.png';
+
+const slugToImage = {
+  'fire-emblem-3-houses': fireEmblemImage,
+  pokemon: pokemonImage,
+  'stardew-valley': stardewValleyImage,
+  'animal-crossing': animalCrossingImage,
+  'league-of-legends': leagueOfLegendsImage,
+};
+
 const IndexPage: NextPageWithLayout = (props) => {
   const { data } = trpc.useQuery(['fandom.all']);
+  console.log(slugToImage);
 
   return (
-    <>
-      <hr />
-      <Box p={4}>
-        <Heading>Pick a Fandom</Heading>
-        <Flex p={4} gap={4}>
-          {data &&
-            data.map((fandom) => {
-              return (
-                <Fragment key={fandom.id}>
-                  <Link href={`/fandom/${fandom.slug}`}>{fandom.name}</Link>
-                </Fragment>
-              );
-            })}
-        </Flex>
-      </Box>
-    </>
+    <Box p={4}>
+      <Heading size="lg">Pick a Fandom</Heading>
+      <Flex p={4} gap={4} wrap="wrap">
+        {data &&
+          data.map((fandom) => {
+            return (
+              <Box
+                key={fandom.id}
+                p={4}
+                borderWidth="1px"
+                borderRadius="lg"
+                bg="red.900"
+              >
+                <Link href={`/fandom/${fandom.slug}`}>
+                  <Image
+                    src={slugToImage[fandom.slug].src}
+                    w={'auto'}
+                    h={'100%'}
+                    maxH={'140px'}
+                  />
+                </Link>
+              </Box>
+            );
+          })}
+      </Flex>
+    </Box>
   );
 };
 

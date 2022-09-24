@@ -68,12 +68,12 @@ const FandomPage: NextPageWithLayout = () => {
         direction="column"
       >
         <Flex
-          h="240px"
+          h="250px"
           gap={4}
           shadow="md"
           borderWidth="1px"
           borderRadius="lg"
-          p={8}
+          p={4}
         >
           {data?.map((item) => {
             if (!item) return null;
@@ -100,14 +100,8 @@ const FandomPage: NextPageWithLayout = () => {
                     alignItems="center"
                     justifyContent="space-between"
                     height="100%"
-                    p={2}
                   >
-                    <Flex
-                      h="100%"
-                      pb={4}
-                      alignItems="center"
-                      justifyContent="center"
-                    >
+                    <Flex h="100%" alignItems="center" justifyContent="center">
                       <Image src={item.imageUrl} alt={item.name} maxH="200px" />
                     </Flex>
                     <Box textTransform={'uppercase'}>{item.name}</Box>
