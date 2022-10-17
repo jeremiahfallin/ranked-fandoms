@@ -23,7 +23,7 @@ const ClientOnly: React.FC = ({ children }: any) => {
   if (!hasMounted) {
     return null;
   }
-  return <>{children}</>;
+  return <FandomPage />;
 };
 
 const FandomPage: NextPageWithLayout = () => {
@@ -96,82 +96,72 @@ const FandomPage: NextPageWithLayout = () => {
   }
 
   return (
-    <ClientOnly>
-      <Flex direction="column" alignItems="center" h="100%" p={4}>
-        <Heading>Choose which you prefer!</Heading>
+    <Flex direction="column" alignItems="center" h="100%" p={4}>
+      <Heading>Choose which you prefer!</Heading>
+      <Flex
+        justifyContent="center"
+        height="100%"
+        gap={2}
+        alignItems="center"
+        direction="column"
+      >
         <Flex
-          justifyContent="center"
-          height="100%"
-          gap={2}
-          alignItems="center"
-          direction="column"
+          h="250px"
+          gap={4}
+          shadow="md"
+          borderWidth="1px"
+          borderRadius="lg"
+          p={4}
         >
-          <Flex
-            h="250px"
-            gap={4}
-            shadow="md"
-            borderWidth="1px"
-            borderRadius="lg"
-            p={4}
-          >
-            {data?.map((item) => {
-              if (!item) return null;
-              if (isFetching) {
-                return (
-                  <React.Fragment key={item.id}>
-                    <Flex
-                      direction="column"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      height="100%"
-                      p={2}
-                    >
-                      <Spinner key={item.id} color="red.500" size="xl" />
+          {data?.map((item) => {
+            if (!item) return null;
+            if (isFetching) {
+              return (
+                <React.Fragment key={item.id}>
+                  <Flex
+                    direction="column"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    height="100%"
+                    p={2}
+                  >
+                    <Spinner key={item.id} color="red.500" size="xl" />
+                  </Flex>
+                </React.Fragment>
+              );
+            } else {
+              return (
+                <React.Fragment key={item.id}>
+                  <Flex
+                    onClick={() => castVote(item.id)}
+                    direction="column"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    height="100%"
+                  >
+                    <Flex h="100%" alignItems="center" justifyContent="center">
+                      <Image src={item.imageUrl} alt={item.name} maxH="200px" />
                     </Flex>
-                  </React.Fragment>
-                );
-              } else {
-                return (
-                  <React.Fragment key={item.id}>
-                    <Flex
-                      onClick={() => castVote(item.id)}
-                      direction="column"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      height="100%"
-                    >
-                      <Flex
-                        h="100%"
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <Image
-                          src={item.imageUrl}
-                          alt={item.name}
-                          maxH="200px"
-                        />
-                      </Flex>
-                      <Box textTransform={'uppercase'}>{item.name}</Box>
-                    </Flex>
-                  </React.Fragment>
-                );
-              }
-            })}
-          </Flex>
-          <Button onClick={() => refetch()}>Skip</Button>
+                    <Box textTransform={'uppercase'}>{item.name}</Box>
+                  </Flex>
+                </React.Fragment>
+              );
+            }
+          })}
         </Flex>
-        <Text>
-          Votes Left:{' '}
-          {voteTimestamps.length > 0 ? 10 - voteTimestamps.length : 10}
-        </Text>
-        {voteTimestamps.length > 0 && (
-          <Text>Next Vote: {voteResetTimestamp}</Text>
-        )}
-        <Text fontSize={'xl'} fontWeight={'bold'}>
-          <Link href={`/fandom/${slug}/results`}>Results</Link>
-        </Text>
+        <Button onClick={() => refetch()}>Skip</Button>
       </Flex>
-    </ClientOnly>
+      <Text>
+        Votes Left:{' '}
+        {voteTimestamps.length > 0 ? 10 - voteTimestamps.length : 10}
+      </Text>
+      {voteTimestamps.length > 0 && (
+        <Text>Next Vote: {voteResetTimestamp}</Text>
+      )}
+      <Text fontSize={'xl'} fontWeight={'bold'}>
+        <Link href={`/fandom/${slug}/results`}>Results</Link>
+      </Text>
+    </Flex>
   );
 };
 
