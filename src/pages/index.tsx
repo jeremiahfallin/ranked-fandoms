@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Image, Spinner } from '@chakra-ui/react';
+import { Box, Flex, Heading, Image, Spinner, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
@@ -54,6 +54,12 @@ const IndexPage: NextPageWithLayout = (props) => {
             );
           })}
       </Flex>
+      {!isFetching && (
+        <Text>
+          This site is in no way affiliated with any of the companies whose IPs
+          are being ranked. It's merely a fan site.
+        </Text>
+      )}
     </Box>
   );
 };

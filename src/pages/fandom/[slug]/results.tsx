@@ -111,6 +111,7 @@ const ResultsPage: React.FC<{
   data: ResultsQueryResult;
 }> = ({ data }) => {
   const slug = useRouter().query.slug as string;
+
   if (!data) return null;
   return (
     <div>
@@ -154,5 +155,8 @@ export const getStaticProps: GetServerSideProps = async ({ params }) => {
   const slug = params!.slug as string;
   const resultsOrdered = await getResultsInOrder(slug);
   const FIVE_MINUTES = 60 * 5;
-  return { props: { data: resultsOrdered }, revalidate: FIVE_MINUTES };
+  return {
+    props: { data: resultsOrdered },
+    revalidate: FIVE_MINUTES,
+  };
 };
