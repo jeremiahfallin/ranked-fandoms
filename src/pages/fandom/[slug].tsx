@@ -17,6 +17,7 @@ import Link from 'next/link';
 import useStickyState from '~/hooks/useStickyState';
 import useInterval from '~/hooks/useInterval';
 import useHasMounted from '~/hooks/useHasMounted';
+import millisecondsToTime from '~/utils/millisecondsToTime';
 
 const ClientOnly: React.FC = ({ children }: any) => {
   const hasMounted = useHasMounted();
@@ -165,12 +166,4 @@ const FandomPage: NextPageWithLayout = () => {
   );
 };
 
-const millisecondsToTime = (milliseconds: number) => {
-  const seconds = Math.floor((milliseconds / 1000) % 60);
-  const minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
-  const hours = Math.floor((milliseconds / (1000 * 60 * 60)) % 24);
-
-  return `${hours}h ${minutes}m ${seconds}s`;
-};
-
-export default FandomPage;
+export default ClientOnly;

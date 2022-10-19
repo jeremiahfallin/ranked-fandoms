@@ -1,7 +1,23 @@
 import type { GetServerSideProps, GetStaticPaths } from 'next';
 import { prisma } from '../../../server/prisma';
 
-import { Box, Flex, Heading, Image, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Grid,
+  Heading,
+  Image,
+  Text,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
+} from '@chakra-ui/react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -79,31 +95,119 @@ const getResultsInOrder = async (slug: string) => {
 
 type ResultsQueryResult = AsyncReturnType<typeof getResultsInOrder>;
 
-const ItemListing: React.FC<{
-  item: ResultsQueryResult[number];
+const TopListing: React.FC<{
+  item: ResultsQueryResult[0] | undefined;
   rank: number;
 }> = ({ item, rank }) => {
+  if (!item) {
+    return null;
+  }
   return (
     <Flex
+      key={item.id}
       direction="row"
-      alignItems="center"
-      border="1px"
-      width="380px"
-      height="120px"
+      align="center"
+      justify="center"
+      w="100%"
+      h="100%"
       p={4}
-      position="relative"
-      justifyContent={'space-between'}
+      backgroundColor="gray.900"
+      borderRadius="lg"
+      gridColumnStart="1"
+      gridColumnEnd="-1"
     >
-      <Box position="absolute" top={0} right={0} p={2}>
+      <Box
+        position="relative"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        marginRight="24px"
+        padding="0 12px 12px"
+        flex="0 0 54px"
+        width="54px"
+        height="71px"
+        backgroundColor={'gray.800'}
+        fontSize="36px"
+        color={'green.300'}
+        fontWeight="700"
+        borderRadius={'lg'}
+      >
         {rank}
+        <Box
+          position="absolute"
+          left="12px"
+          right="12px"
+          bottom="12px"
+          height="2px"
+          borderRadius="1px"
+          backgroundColor={'green.300'}
+        />
       </Box>
-      <Box>
-        <Image src={item.imageUrl} alt={item.name} maxH="100px" maxW="100px" />
-      </Box>
-      <Flex direction="column" alignItems="center">
-        <Box textTransform={'uppercase'}>{item.name}</Box>
-      </Flex>
+      <Image
+        src={item.imageUrl}
+        alt={item.name}
+        maxH="200px"
+        maxW="200px"
+        objectFit="contain"
+      />
+      <Text fontSize="xl" fontWeight="bold" textTransform={'uppercase'}>
+        {item.name}
+      </Text>
     </Flex>
+  );
+};
+
+const NotableListing: React.FC<{
+  item: ResultsQueryResult[0] | undefined;
+  rank: number;
+}> = ({ item, rank }) => {
+  if (!item) {
+    return null;
+  }
+  return (
+    <Flex
+      key={item.id}
+      direction="column"
+      align="center"
+      justify="center"
+      h="100%"
+      w="100%"
+      p={4}
+      backgroundColor="gray.900"
+      borderRadius="lg"
+    >
+      <Image
+        src={item.imageUrl}
+        alt={item.name}
+        maxH="200px"
+        maxW="200px"
+        objectFit="contain"
+      />
+      <Text fontSize="xl" fontWeight="bold" textTransform={'uppercase'}>
+        {item.name}
+      </Text>
+      <Text fontSize="md" fontWeight="bold">
+        Rank: {rank}
+      </Text>
+    </Flex>
+  );
+};
+
+const ItemListing: React.FC<{
+  item: ResultsQueryResult[number] | undefined;
+  rank: number;
+}> = ({ item, rank }) => {
+  if (!item) {
+    return null;
+  }
+  return (
+    <Tr>
+      <Td isNumeric>{rank}</Td>
+      <Td>
+        <Image src={item.imageUrl} alt={item.name} maxH="100px" maxW="100px" />
+      </Td>
+      <Td textTransform={'uppercase'}>{item.name}</Td>
+    </Tr>
   );
 };
 
@@ -119,14 +223,54 @@ const ResultsPage: React.FC<{
         <title>Results</title>
       </Head>
 
-      <Flex justifyContent="center" alignItems="center" direction="column">
+      <Flex
+        justifyContent="center"
+        alignItems="center"
+        direction="column"
+        padding={{
+          base: '0 16px',
+          md: '0 32px',
+          lg: '0 64px',
+        }}
+      >
         <Heading pb={8}>Results</Heading>
         <Text fontSize="xl" pb={2}>
           <Link href={`/fandom/${slug}`}>Vote</Link>
         </Text>
-        {data.map((item, index) => {
-          return <ItemListing key={item.id} item={item} rank={index + 1} />;
-        })}
+        <Grid
+          gap={4}
+          w="100%"
+          pt={4}
+          autoRows="1fr"
+          gridTemplateColumns={[
+            'repeat(1, 1fr)',
+            'repeat(2, 1fr)',
+            'repeat(4, 1fr)',
+          ]}
+        >
+          <TopListing item={data[0]} rank={1} />
+          <NotableListing item={data[1]} rank={2} />
+          <NotableListing item={data[2]} rank={3} />
+          <NotableListing item={data[3]} rank={4} />
+          <NotableListing item={data[4]} rank={5} />
+        </Grid>
+        <Table>
+          <Thead>
+            <Tr>
+              <Th isNumeric>Rank</Th>
+              <Th>Name</Th>
+              <Th>Image</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {data.map((item, index) => {
+              if (index < 5) {
+                return null;
+              }
+              return <ItemListing key={item.id} item={item} rank={index + 1} />;
+            })}
+          </Tbody>
+        </Table>
       </Flex>
     </div>
   );

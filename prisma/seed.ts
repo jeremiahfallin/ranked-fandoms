@@ -33,6 +33,11 @@ interface FireEmblemThreeHousesData {
   imageUrl: string;
 }
 
+interface CoralIslandData {
+  name: string;
+  imageUrl: string;
+}
+
 async function insertPokemon() {
   const slug = 'pokemon';
   const fandom = await prisma.fandom.upsert({
@@ -520,10 +525,25 @@ async function insertFireEmblemThreeHouses() {
   }
 }
 
+async function insertCoralIsland() {
+  const slug = 'coral-island';
+  const fandom = await prisma.fandom.upsert({
+    where: {
+      slug,
+    },
+    create: {
+      slug,
+      name: 'Coral Island',
+    },
+    update: {},
+  });
+  const characters = [];
+}
+
 async function main() {
   // await insertPokemon();
-  await insertStardew();
-  await insertFireEmblemThreeHouses();
+  // await insertStardew();
+  // await insertFireEmblemThreeHouses();
 }
 
 main()
