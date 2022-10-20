@@ -1,4 +1,12 @@
-import { Box, Flex, Heading, Image, Spinner, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Center,
+  Flex,
+  Heading,
+  Image,
+  Spinner,
+  Text,
+} from '@chakra-ui/react';
 import Link from 'next/link';
 import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
@@ -37,28 +45,36 @@ const IndexPage: NextPageWithLayout = (props) => {
             return (
               <Box
                 key={fandom.id}
-                p={4}
-                borderWidth="1px"
-                borderRadius="lg"
-                bg="whiteAlpha.900"
+                style={{
+                  cursor: 'pointer',
+                }}
               >
                 <Link href={`/fandom/${fandom.slug}`}>
-                  <Image
-                    src={slugToImage[fandom.slug]?.src || ''}
-                    w={'auto'}
-                    h={'100%'}
-                    maxH={'140px'}
-                  />
+                  <Box
+                    p={4}
+                    borderWidth="1px"
+                    borderRadius="lg"
+                    bg="whiteAlpha.900"
+                  >
+                    <Image
+                      src={slugToImage[fandom.slug]?.src || ''}
+                      w={'auto'}
+                      h={'100%'}
+                      maxH={'140px'}
+                    />
+                  </Box>
                 </Link>
               </Box>
             );
           })}
       </Flex>
       {!isFetching && (
-        <Text>
-          This site is in no way affiliated with any of the companies whose IPs
-          are being ranked. It's merely a fan site.
-        </Text>
+        <Center>
+          <Text>
+            This site is in no way affiliated with any of the companies whose
+            Intellectual Propertiess are being ranked.
+          </Text>
+        </Center>
       )}
     </Box>
   );

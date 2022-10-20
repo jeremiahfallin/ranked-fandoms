@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import type { GetServerSideProps, GetStaticPaths } from 'next';
 import { prisma } from '../../../server/prisma';
-
 import {
   Box,
+  Button,
   Flex,
   Grid,
   Heading,
@@ -110,11 +111,11 @@ const TopListing: React.FC<{
       justify="center"
       w="100%"
       h="100%"
-      p={4}
       backgroundColor="gray.900"
       borderRadius="lg"
       gridColumnStart="1"
       gridColumnEnd="-1"
+      gap={4}
     >
       <Box
         position="relative"
@@ -215,6 +216,7 @@ const ResultsPage: React.FC<{
   data: ResultsQueryResult;
 }> = ({ data }) => {
   const slug = useRouter().query.slug as string;
+  const [maxListing, setMaxListing] = useState(Math.min(data?.length, 9));
 
   if (!data) return null;
   return (
@@ -233,14 +235,15 @@ const ResultsPage: React.FC<{
           lg: '0 64px',
         }}
       >
-        <Heading pb={8}>Results</Heading>
-        <Text fontSize="xl" pb={2}>
+        <Heading py={8}>Results</Heading>
+        <Text fontSize="xl" pb={2} fontWeight="bold" color="green.300">
           <Link href={`/fandom/${slug}`}>Vote</Link>
         </Text>
         <Grid
           gap={4}
           w="100%"
           pt={4}
+          pb={4}
           autoRows="1fr"
           gridTemplateColumns={[
             'repeat(1, 1fr)',
@@ -258,8 +261,8 @@ const ResultsPage: React.FC<{
           <Thead>
             <Tr>
               <Th isNumeric>Rank</Th>
-              <Th>Name</Th>
               <Th>Image</Th>
+              <Th>Name</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -267,10 +270,24 @@ const ResultsPage: React.FC<{
               if (index < 5) {
                 return null;
               }
+              if (index > maxListing) {
+                return null;
+              }
               return <ItemListing key={item.id} item={item} rank={index + 1} />;
             })}
           </Tbody>
         </Table>
+        {maxListing < data.length && (
+          <Box textAlign="center" py={4}>
+            <Button
+              onClick={() => {
+                setMaxListing((m) => Math.max(m + 10, data.length));
+              }}
+            >
+              Load More
+            </Button>
+          </Box>
+        )}
       </Flex>
     </div>
   );

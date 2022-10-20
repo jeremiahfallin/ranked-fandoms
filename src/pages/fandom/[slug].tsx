@@ -98,7 +98,6 @@ const FandomPage: NextPageWithLayout = () => {
 
   return (
     <Flex direction="column" alignItems="center" h="100%" p={4}>
-      <Heading>Choose which you prefer!</Heading>
       <Flex
         justifyContent="center"
         height="100%"
@@ -106,14 +105,15 @@ const FandomPage: NextPageWithLayout = () => {
         alignItems="center"
         direction="column"
       >
-        <Flex
-          h="250px"
-          gap={4}
-          shadow="md"
-          borderWidth="1px"
-          borderRadius="lg"
-          p={4}
-        >
+        <Heading pb={'8'}>Which is better?</Heading>
+        <Heading as="h3" size="lg">
+          Votes Left:{' '}
+          {voteTimestamps.length > 0 ? 10 - voteTimestamps.length : 10}
+        </Heading>
+        {voteTimestamps.length > 0 && (
+          <Text>Next Vote: {voteResetTimestamp}</Text>
+        )}
+        <Flex gap={4} shadow="md" borderWidth="1px" borderRadius="lg" p={4}>
           {data?.map((item) => {
             if (!item) return null;
             if (isFetching) {
@@ -141,7 +141,7 @@ const FandomPage: NextPageWithLayout = () => {
                     height="100%"
                   >
                     <Flex h="100%" alignItems="center" justifyContent="center">
-                      <Image src={item.imageUrl} alt={item.name} maxH="200px" />
+                      <Image src={item.imageUrl} alt={item.name} />
                     </Flex>
                     <Box textTransform={'uppercase'}>{item.name}</Box>
                   </Flex>
@@ -152,13 +152,6 @@ const FandomPage: NextPageWithLayout = () => {
         </Flex>
         <Button onClick={() => refetch()}>Skip</Button>
       </Flex>
-      <Text>
-        Votes Left:{' '}
-        {voteTimestamps.length > 0 ? 10 - voteTimestamps.length : 10}
-      </Text>
-      {voteTimestamps.length > 0 && (
-        <Text>Next Vote: {voteResetTimestamp}</Text>
-      )}
       <Text fontSize={'xl'} fontWeight={'bold'}>
         <Link href={`/fandom/${slug}/results`}>Results</Link>
       </Text>
