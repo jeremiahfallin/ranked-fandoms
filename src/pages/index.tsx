@@ -72,7 +72,7 @@ const IndexPage: NextPageWithLayout = (props) => {
         <Center>
           <Text>
             This site is in no way affiliated with any of the companies whose
-            Intellectual Propertiess are being ranked.
+            Intellectual Properties are being ranked.
           </Text>
         </Center>
       )}
