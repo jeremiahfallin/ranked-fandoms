@@ -139,6 +139,7 @@ const FandomPage: NextPageWithLayout = () => {
                     alignItems="center"
                     justifyContent="space-between"
                     height="100%"
+                    cursor="pointer"
                   >
                     <Flex h="100%" alignItems="center" justifyContent="center">
                       <Image src={item.imageUrl} alt={item.name} />

@@ -106,9 +106,9 @@ const TopListing: React.FC<{
   return (
     <Flex
       key={item.id}
-      direction="row"
-      align="center"
-      justify="center"
+      direction={['column', 'row']}
+      align={['flex-start', 'center', 'center', 'center']}
+      justify={['center']}
       w="100%"
       h="100%"
       backgroundColor="gray.900"
@@ -116,13 +116,13 @@ const TopListing: React.FC<{
       gridColumnStart="1"
       gridColumnEnd="-1"
       gap={4}
+      p={4}
     >
       <Box
         position="relative"
         display="flex"
         alignItems="center"
         justifyContent="center"
-        marginRight="24px"
         padding="0 12px 12px"
         flex="0 0 54px"
         width="54px"
@@ -144,16 +144,23 @@ const TopListing: React.FC<{
           backgroundColor={'green.300'}
         />
       </Box>
-      <Image
-        src={item.imageUrl}
-        alt={item.name}
-        maxH="200px"
-        maxW="200px"
-        objectFit="contain"
-      />
-      <Text fontSize="xl" fontWeight="bold" textTransform={'uppercase'}>
-        {item.name}
-      </Text>
+      <Flex
+        w="100%"
+        direction={['column', 'row']}
+        align={'center'}
+        justify="space-evenly"
+      >
+        <Image
+          src={item.imageUrl}
+          alt={item.name}
+          maxH="200px"
+          maxW="200px"
+          objectFit="contain"
+        />
+        <Text fontSize="xl" fontWeight="bold" textTransform={'uppercase'}>
+          {item.name}
+        </Text>
+      </Flex>
     </Flex>
   );
 };
@@ -241,7 +248,6 @@ const ResultsPage: React.FC<{
         </Text>
         <Grid
           gap={4}
-          w="100%"
           pt={4}
           pb={4}
           autoRows="1fr"
@@ -281,7 +287,7 @@ const ResultsPage: React.FC<{
           <Box textAlign="center" py={4}>
             <Button
               onClick={() => {
-                setMaxListing((m) => Math.max(m + 10, data.length));
+                setMaxListing((m) => Math.min(m + 10, data.length));
               }}
             >
               Load More
