@@ -6,6 +6,7 @@ import {
   Image,
   Spinner,
   Text,
+  keyframes,
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { trpc } from '../utils/trpc';
@@ -31,45 +32,124 @@ interface SlugToImage {
   };
 }
 
+const rotate = keyframes`
+  from {
+    transform: rotateY(-360deg);
+  }
+  to {
+    transform: rotateY(0deg);
+  }
+`;
+
+interface Fandom {
+  name: string;
+  slug: string;
+}
+
+const Wrapper = ({ fandoms }: { fandoms: Fandom[] }) => {
+  return (
+    <Box
+      position="relative"
+      width="320px"
+      margin="150px auto"
+      style={{ perspective: '1000px' }}
+    >
+      <Box
+        position="absolute"
+        width="100%"
+        height="100%"
+        transform={`rotateY(-360deg) translateZ(-300px)`}
+        animation={`${rotate} 40s steps(10000, end) infinite`}
+        style={{ transformStyle: 'preserve-3d' }}
+      >
+        {fandoms.map((t, i) => (
+          <Box
+            key={i}
+            position="absolute"
+            top="10px"
+            left="10px"
+            background="green.400"
+            p="2"
+            borderRadius="md"
+            transform={`rotateY(${
+              (360 / fandoms.length) * i
+            }deg) translateZ(300px)`}
+          >
+            <Link href={`/fandom/${t.slug}/`}>{t.name}</Link>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
+interface ImageFandom {
+  name: string;
+  slug: string;
+  imageUrl: string;
+}
+
+const ImageWrapper = ({ fandoms }: { fandoms: ImageFandom[] }) => {
+  return (
+    <Box
+      position="relative"
+      width="320px"
+      margin="150px auto"
+      style={{ perspective: '1000px' }}
+    >
+      <Box
+        position="absolute"
+        width="100%"
+        height="100%"
+        transform={`rotateY(-360deg) translateZ(-300px)`}
+        animation={`${rotate} 40s steps(10000, end) infinite`}
+        style={{ transformStyle: 'preserve-3d' }}
+      >
+        {fandoms.map((t, i) => (
+          <Box
+            key={i}
+            position="absolute"
+            top="10px"
+            left="10px"
+            background="green.400"
+            p="2"
+            borderRadius="md"
+            transform={`rotateY(${
+              (360 / fandoms.length) * i
+            }deg) translateZ(300px)`}
+          >
+            <Image height="120px" src={t.imageUrl} alt={t.name} />
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
 const IndexPage: NextPageWithLayout = (props) => {
   const { data, isFetching } = trpc.useQuery(['fandom.all']);
 
   return (
     <Box p={4}>
-      <Heading size="lg">Pick a Fandom</Heading>
+      <Center>
+        <Heading size="lg">Pick a Fandom</Heading>
+      </Center>
       <Flex p={4} gap={4} wrap="wrap">
         {isFetching && <Spinner color="red.500" size="xl" />}
-        {data &&
-          !isFetching &&
-          data.map((fandom) => {
-            return (
-              <Box
-                key={fandom.id}
-                style={{
-                  cursor: 'pointer',
-                }}
-              >
-                <Link href={`/fandom/${fandom.slug}`}>
-                  <Box
-                    p={4}
-                    borderWidth="1px"
-                    borderRadius="lg"
-                    bg="whiteAlpha.900"
-                  >
-                    <Image
-                      src={slugToImage[fandom.slug]?.src || ''}
-                      w={'auto'}
-                      h={'100%'}
-                      maxH={'140px'}
-                    />
-                  </Box>
-                </Link>
-              </Box>
-            );
-          })}
+        {data && !isFetching && (
+          <ImageWrapper
+            fandoms={data.map((fandom) => {
+              return {
+                name: fandom.name,
+                slug: fandom.slug,
+                imageUrl: slugToImage[fandom.slug]?.src ?? '',
+              };
+            })}
+          />
+        )}
       </Flex>
       {!isFetching && (
-        <Center>
+        <Center pt="48">
           <Text>
             This site is in no way affiliated with any of the companies whose
             Intellectual Properties are being ranked.

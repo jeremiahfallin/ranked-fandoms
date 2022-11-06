@@ -177,7 +177,7 @@ const NotableListing: React.FC<{
       key={item.id}
       direction="column"
       align="center"
-      justify="center"
+      justify="space-between"
       h="100%"
       w="100%"
       p={4}
@@ -191,12 +191,14 @@ const NotableListing: React.FC<{
         maxW="200px"
         objectFit="contain"
       />
-      <Text fontSize="xl" fontWeight="bold" textTransform={'uppercase'}>
-        {item.name}
-      </Text>
-      <Text fontSize="md" fontWeight="bold">
-        Rank: {rank}
-      </Text>
+      <Flex direction="column" align="center" justify="center">
+        <Text fontSize="xl" fontWeight="bold" textTransform={'uppercase'}>
+          {item.name}
+        </Text>
+        <Text fontSize="md" fontWeight="bold">
+          Rank: {rank}
+        </Text>
+      </Flex>
     </Flex>
   );
 };
